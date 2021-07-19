@@ -1,10 +1,11 @@
 #include "clogger.h"
 
 #ifdef WIN32
-static const uint64_t epoch = (uint64_t) 116444736000000000ULL; // FILETIME of Jan 1 1970 00:00:00
+#define EPOCH_FILETIME          116444736000000000ULL // FILETIME of Jan 1 1970 00:00:00
 #endif
-static const unsigned int MS_PART_BUFFER_SIZE = 6; // "sss] "
-static const unsigned int TIME_BUFFER_SIZE = 27;
+
+#define MS_PART_BUFFER_SIZE     6  // "sss] "
+#define TIME_BUFFER_SIZE        27 // "[2020-01-01 11:11:11.111] "
 
 static inline void internal_gettimeofday(struct timeval* tp) {
 #ifdef WIN32
@@ -17,7 +18,7 @@ static inline void internal_gettimeofday(struct timeval* tp) {
     ularge.LowPart = file_time.dwLowDateTime;
     ularge.HighPart = file_time.dwHighDateTime;
 
-    tp->tv_sec = (long) ((ularge.QuadPart - epoch) / 10000000L);
+    tp->tv_sec = (long) ((ularge.QuadPart - EPOCH_FILETIME) / 10000000L);
     tp->tv_usec = (long) (system_time.wMilliseconds * 1000);
 #else
     gettimeofday(tp, 0);
@@ -33,7 +34,7 @@ static inline void internal_get_current_time_str(char* date_time_str) {
     char ms_str[MS_PART_BUFFER_SIZE];
     memset(ms_str, '\0', MS_PART_BUFFER_SIZE * sizeof(char));
 
-    snprintf(ms_str, MS_PART_BUFFER_SIZE, "%03ld] ", tp.tv_usec / 1000);
+    snprintf(ms_str, MS_PART_BUFFER_SIZE, "%03ld] ", tp.tv_usec / 1000L);
     strftime(date_time_str, TIME_BUFFER_SIZE, "[%Y-%m-%d %H:%M:%S.", localtime(&now_time));
     strncat(date_time_str, ms_str, MS_PART_BUFFER_SIZE);
 }

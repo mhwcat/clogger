@@ -35,6 +35,10 @@ This software is offered as-is, without any warranty.
 #ifndef CLOGGER_H
 #define CLOGGER_H
 
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
