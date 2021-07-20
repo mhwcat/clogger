@@ -40,14 +40,19 @@ This software is offered as-is, without any warranty.
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 #include <time.h>
 #include <string.h>
+#include <stdbool.h>
 #ifdef WIN32
 #include <stdint.h>
 #include <windows.h>
 #else
 #include <sys/time.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
 #endif
 
 #define CLOG_LVL_DEBUG              0
@@ -58,6 +63,8 @@ This software is offered as-is, without any warranty.
 #ifndef CLOGGER_LOG_LEVEL
 #define CLOGGER_LOG_LEVEL           CLOG_LVL_DEBUG
 #endif
+
+#define CLOGGER_FILE_EXTENSION      ".clog"
 
 #if CLOGGER_LOG_LEVEL == CLOG_LVL_INFO
 #define CLOG_DEBUG(format, ...)     ;
@@ -80,18 +87,32 @@ This software is offered as-is, without any warranty.
 #define CLOG_WARN(format, ...)      warn(format, ##__VA_ARGS__)
 #define CLOG_ERROR(format, ...)     error(format, ##__VA_ARGS__)
 #endif
+#define CLOG_INIT_FILE(path)        clogger_init_file(path)
+#define CLOG_CLEANUP_FILE()         clogger_cleanup_file()
+
+#define CLOGGER_COLOR_DEBUG_TAG     "\033[36mDEBUG\033[39m "
+#define CLOGGER_COLOR_INFO_TAG      "\033[92mINFO\033[39m  "
+#define CLOGGER_COLOR_WARN_TAG      "\033[33mWARN\033[39m  "
+#define CLOGGER_COLOR_ERROR_TAG     "\033[91mERROR\033[39m "
+#define CLOGGER_PLAIN_DEBUG_TAG     "DEBUG "
+#define CLOGGER_PLAIN_INFO_TAG      "INFO  "
+#define CLOGGER_PLAIN_WARN_TAG      "WARN  "
+#define CLOGGER_PLAIN_ERROR_TAG     "ERROR "
 
 #ifdef CLOGGER_USE_COLORED_OUTPUT
-#define CLOGGER_INFO_TAG            "\033[92mINFO\033[39m  "
-#define CLOGGER_DEBUG_TAG           "\033[36mDEBUG\033[39m "
-#define CLOGGER_WARN_TAG            "\033[33mWARN\033[39m  "
-#define CLOGGER_ERROR_TAG           "\033[91mERROR\033[39m "
+#define CLOGGER_DEBUG_TAG           CLOGGER_COLOR_DEBUG_TAG
+#define CLOGGER_INFO_TAG            CLOGGER_COLOR_INFO_TAG
+#define CLOGGER_WARN_TAG            CLOGGER_COLOR_WARN_TAG
+#define CLOGGER_ERROR_TAG           CLOGGER_COLOR_ERROR_TAG
 #else
-#define CLOGGER_INFO_TAG            "INFO  "
-#define CLOGGER_DEBUG_TAG           "DEBUG "
-#define CLOGGER_WARN_TAG            "WARN  "
-#define CLOGGER_ERROR_TAG           "ERROR "
+#define CLOGGER_DEBUG_TAG           CLOGGER_PLAIN_DEBUG_TAG
+#define CLOGGER_INFO_TAG            CLOGGER_PLAIN_INFO_TAG
+#define CLOGGER_WARN_TAG            CLOGGER_PLAIN_WARN_TAG
+#define CLOGGER_ERROR_TAG           CLOGGER_PLAIN_ERROR_TAG
 #endif
+
+void clogger_init_file(const char* path);
+void clogger_cleanup_file();
 
 void debug(const char* format, ...);
 void info(const char* format, ...);
