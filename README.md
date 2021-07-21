@@ -1,7 +1,7 @@
 # clogger 
 *Very simple logging utility for C/C++*
 
-Lightweight, cross-platform utility that can be used for logging needs in C/C++. It should compile and run on Linux, Windows and macOS. It outputs to stdout and supports parameters.
+Lightweight, cross-platform utility that can be used for logging needs in C/C++. It should compile and run on Linux, Windows and macOS. It outputs to stdout and optionally to file and supports parameters.
 ## Compiling
 Copy `clogger.h` and `clogger.c` to your project and add to your compilation script.  
 Example compilation:  
@@ -14,15 +14,19 @@ Clang: `clang -o bin/simple -Wall -DCLOGGER_USE_COLORED_OUTPUT -DCLOGGER_LOG_LEV
 ```c
 #include "clogger.h"
 // (...)
-CLOG_INFO("Hello number %d from %s!", i, name);
+CLOG_INIT_FILE("logs/"); // do it once at the beggining if you want to use log files
+CLOG_INFO("Hello number %d from %s!", i, name); 
+CLOG_CLEANUP_FILE(); // do it once at the end if you enabled log files    
 ```
 Also see `examples/`.  
 Example output:  
 `[2021-07-19 16:12:46.748] INFO Hello number 3 from clogger!`
 ## To do
-- Support saving logs to files
+- Use WinAPI calls when writing to log files on Win32 (stdlib is not reliable there)
 ## Changelog
-- v0.5 (2021-07-19)
+- v0.6 (2021-07-21)  
+Added log files support
+- v0.5 (2021-07-19)  
 Initial version
 ## License
 Copying and distribution of this software, with or without modification, are permitted in any medium without royalty, provided the copyright notice and this notice are preserved.  

@@ -1,5 +1,5 @@
 /*
-clogger v0.5 - Very simple logging utility for C/C++
+clogger v0.6 - Very simple logging utility for C/C++
 2021 (c) Michał 'mhwcat' Gumny
 
 This is lightweight, cross-platform utility that can be used for logging needs in C/C++.
@@ -9,6 +9,10 @@ Example usage:
 CLOG_INFO("Hello number %d from %s!", i, name);
 Example output:
 [2021-07-19 16:12:46.748] INFO Hello number 3 from clogger!
+If you want to use log files, provide log directory path at start of your app:
+    CLOG_INIT_FILE("logs/");
+and cleanup open log files when your app stops:
+    CLOG_CLEANUP_FILE();    
 
 Colored terminal output can be enabled by passing CLOGGER_USE_COLORED_OUTPUT option during compilation.
 Log level can be selected by passing CLOGGER_LOG_LEVEL option with possible values:
@@ -18,10 +22,12 @@ CLOG_LVL_WARN
 CLOG_LVL_ERROR
 
 To do:
-- Support saving logs to files
+- Use WinAPI calls when writing to log files on Win32 (stdlib is not reliable there)
 
 Changelog:
-- v0.5 (2021-07-19)
+- v0.6 (2021-07-21)  
+    Added log files support
+- v0.5 (2021-07-19)  
     Initial version
 
 License:
