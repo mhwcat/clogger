@@ -7,7 +7,7 @@ It should compile and run on Linux, Windows and macOS. It outputs to stdout and 
 Four log levels are available: DEBUG, INFO, WARN, ERROR.
 Example usage:
 CLOG_INFO("Hello number %d from %s!", i, name);
-Example output: 
+Example output:
 [2021-07-19 16:12:46.748] INFO Hello number 3 from clogger!
 
 Colored terminal output can be enabled by passing CLOGGER_USE_COLORED_OUTPUT option during compilation.
@@ -25,9 +25,9 @@ Changelog:
     Initial version
 
 License:
-Copying and distribution of this software, with or without modification, 
-are permitted in any medium without royalty, provided the copyright notice 
-and this notice are preserved. 
+Copying and distribution of this software, with or without modification,
+are permitted in any medium without royalty, provided the copyright notice
+and this notice are preserved.
 This software is offered as-is, without any warranty.
 
 */

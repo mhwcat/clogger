@@ -8,6 +8,12 @@
 #define TIME_BUFFER_SIZE        27 // "[2020-01-01 11:11:11.111] "
 #define DATE_BUFFER_SIZE        11 // "2020-01-01"
 
+#ifdef WIN32
+#define NEWLINE_CHAR            "\r\n"
+#else
+#define NEWLINE_CHAR            "\n"
+#endif
+
 static bool log_file_write_enabled = false;
 static char current_log_file_path[255];
 static FILE* current_log_file_handle;
@@ -56,7 +62,9 @@ static inline void internal_get_current_date_str(char* date_time_str) {
 
 static inline void update_current_day(const char* date_formatted) {
     char day_str[3];
-    strncpy(day_str, date_formatted + DATE_BUFFER_SIZE - 3, 3);
+    memset(day_str, '\0', 3 * sizeof(char));
+
+    strncpy(day_str, date_formatted + DATE_BUFFER_SIZE - 3, 2);
     current_day = atoi(day_str);
 }
 
@@ -74,18 +82,18 @@ static inline bool open_file() {
 
 // Returns true if logger was rolled over to next file
 static inline bool rollover_if_needed(const char* date_time_formatted) {
-    const int old_current_day = current_day;
+    const unsigned int old_current_day = current_day;
 
     char date_formatted[DATE_BUFFER_SIZE];
     memset(date_formatted, '\0', DATE_BUFFER_SIZE * sizeof(char));
-    strncpy(date_formatted, date_time_formatted + 1, DATE_BUFFER_SIZE);
+    strncpy(date_formatted, date_time_formatted + 1, DATE_BUFFER_SIZE - 1);
 
     update_current_day(date_formatted);
 
     if (current_day > old_current_day) {
         clogger_cleanup_file();
-        
-        strncpy(current_log_file_path + strlen(current_log_file_path) - strlen(CLOGGER_FILE_EXTENSION) - DATE_BUFFER_SIZE + 1, 
+
+        strncpy(current_log_file_path + strlen(current_log_file_path) - strlen(CLOGGER_FILE_EXTENSION) - DATE_BUFFER_SIZE + 1,
             date_formatted, strlen(date_formatted));
         strncpy(current_log_file_path + strlen(current_log_file_path) - strlen(CLOGGER_FILE_EXTENSION), CLOGGER_FILE_EXTENSION,
             strlen(CLOGGER_FILE_EXTENSION) + 1);
@@ -100,7 +108,7 @@ static inline bool rollover_if_needed(const char* date_time_formatted) {
     return false;
 }
 
-void clogger_init_file(const char* path) {  
+void clogger_init_file(const char* path) {
     memset(current_log_file_path, '\0', 255 * sizeof(char));
 
     char date_formatted[DATE_BUFFER_SIZE];
@@ -158,8 +166,8 @@ void debug(const char* format, ...) {
         va_end(args);
     }
 
-    fputs("\n", stdout);
-    if (log_file_write_enabled) fwrite("\n", 1, sizeof(char), current_log_file_handle);
+    fputs(NEWLINE_CHAR, stdout);
+    if (log_file_write_enabled) fwrite(NEWLINE_CHAR, 1, sizeof(char), current_log_file_handle);
 }
 
 void info(const char* format, ...) {
@@ -189,8 +197,8 @@ void info(const char* format, ...) {
         va_end(args);
     }
 
-    fputs("\n", stdout);
-    if (log_file_write_enabled) fwrite("\n", 1, sizeof(char), current_log_file_handle);
+    fputs(NEWLINE_CHAR, stdout);
+    if (log_file_write_enabled) fwrite(NEWLINE_CHAR, 1, sizeof(char), current_log_file_handle);
 }
 
 void warn(const char* format, ...) {
@@ -220,8 +228,8 @@ void warn(const char* format, ...) {
         va_end(args);
     }
 
-    fputs("\n", stdout);
-    if (log_file_write_enabled) fwrite("\n", 1, sizeof(char), current_log_file_handle);
+    fputs(NEWLINE_CHAR, stdout);
+    if (log_file_write_enabled) fwrite(NEWLINE_CHAR, 1, sizeof(char), current_log_file_handle);
 }
 
 void error(const char* format, ...) {
@@ -251,6 +259,6 @@ void error(const char* format, ...) {
         va_end(args);
     }
 
-    fputs("\n", stdout);
-    if (log_file_write_enabled) fwrite("\n", 1, sizeof(char), current_log_file_handle);
+    fputs(NEWLINE_CHAR, stdout);
+    if (log_file_write_enabled) fwrite(NEWLINE_CHAR, 1, sizeof(char), current_log_file_handle);
 }
