@@ -144,7 +144,7 @@ void debug(const char* format, ...) {
     memset(time_formatted, '\0', TIME_BUFFER_SIZE * sizeof(char));
     internal_get_current_time_str(time_formatted);
 
-    if (rollover_if_needed(time_formatted)) {
+    if (log_file_write_enabled && rollover_if_needed(time_formatted)) {
         CLOG_DEBUG("Rolling over log file to %s", current_log_file_path);
     }
 
@@ -175,7 +175,7 @@ void info(const char* format, ...) {
     memset(time_formatted, '\0', TIME_BUFFER_SIZE * sizeof(char));
     internal_get_current_time_str(time_formatted);
 
-    if (rollover_if_needed(time_formatted)) {
+    if (log_file_write_enabled && rollover_if_needed(time_formatted)) {
         CLOG_DEBUG("Rolling over log file to %s", current_log_file_path);
     }
 
@@ -206,7 +206,7 @@ void warn(const char* format, ...) {
     memset(time_formatted, '\0', TIME_BUFFER_SIZE * sizeof(char));
     internal_get_current_time_str(time_formatted);
 
-    if (rollover_if_needed(time_formatted)) {
+    if (log_file_write_enabled && rollover_if_needed(time_formatted)) {
         CLOG_DEBUG("Rolling over log file to %s", current_log_file_path);
     }
 
@@ -237,7 +237,7 @@ void error(const char* format, ...) {
     memset(time_formatted, '\0', TIME_BUFFER_SIZE * sizeof(char));
     internal_get_current_time_str(time_formatted);
 
-    if (rollover_if_needed(time_formatted)) {
+    if (log_file_write_enabled && rollover_if_needed(time_formatted)) {
         CLOG_DEBUG("Rolling over log file to %s", current_log_file_path);
     }
 
